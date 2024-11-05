@@ -1,4 +1,4 @@
-package com.yuanbao.sms.util;
+package com.example.log.util;
 
 
 import java.io.UnsupportedEncodingException;

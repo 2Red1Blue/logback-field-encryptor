@@ -1,4 +1,4 @@
-package com.yuanbao.sms.config;
+package com.example.log.config;
 
 import java.util.Arrays;
 import java.util.HashMap;

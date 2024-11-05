@@ -1,8 +1,8 @@
-package com.yuanbao.sms.convertor;
+package com.example.log.convertor;
 
 import ch.qos.logback.classic.pattern.ClassicConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import com.yuanbao.sms.util.XXTEAUtil;
+import com.example.log.util.XXTEAUtil;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

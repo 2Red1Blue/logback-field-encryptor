@@ -1,6 +1,6 @@
-package com.yuanbao.sms.spi;
+package com.example.log.spi;
 
-import com.yuanbao.sms.encrypt.EncryptStrategy;
+import com.example.log.encrypt.EncryptStrategy;
 
 /**
  * @author liuzhixin
