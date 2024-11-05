@@ -1,12 +1,12 @@
-package com.yuanbao.sms.encrypt;
+package com.example.log.encrypt;
 
-import com.yuanbao.sms.util.XXTEAUtil;
+import com.example.log.util.XXTEAUtil;
 
 /**
  * @author liuzhixin
  * @Description:
  */
-public class XXTeaEncrypt implements com.yuanbao.sms.encrypt.EncryptStrategy {
+public class XXTeaEncrypt implements EncryptStrategy {
     private final String key;
 
     public XXTeaEncrypt(String key) {

@@ -1,4 +1,4 @@
-import com.yuanbao.sms.util.XXTEAUtil;
+import com.example.log.util.XXTEAUtil;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

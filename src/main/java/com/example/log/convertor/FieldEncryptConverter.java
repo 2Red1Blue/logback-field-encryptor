@@ -1,4 +1,4 @@
-package com.yuanbao.sms.convertor;
+package com.example.log.convertor;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,14 +14,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.yuanbao.sms.spi.EncryptStrategyFactory;
+import com.example.log.spi.EncryptStrategyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.yuanbao.sms.config.FieldEncryptConfig;
-import com.yuanbao.sms.encrypt.Base64Encrypt;
-import com.yuanbao.sms.encrypt.EncryptStrategy;
-import com.yuanbao.sms.encrypt.XXTeaEncrypt;
+import com.example.log.config.FieldEncryptConfig;
+import com.example.log.encrypt.EncryptStrategy;
 
 import ch.qos.logback.classic.pattern.ClassicConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;

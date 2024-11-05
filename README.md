@@ -13,21 +13,24 @@
 ### 2. 配置 Logback
 
 在 logback-spring.xml 或 logback.xml 中添加：
+
 ```xml
 <!-- 1. 定义转换器 -->
-<conversionRule conversionWord="fieldEncrypt" 
-    converterClass="com.yuanbao.sms.convertor.FieldEncryptConverter"/>
+<conversionRule conversionWord="fieldEncrypt"
+                converterClass="com.example.log.convertor.FieldEncryptConverter"/>
 
-<!-- 2. 在 pattern 中使用转换器 -->
+        <!-- 2. 在 pattern 中使用转换器 -->
 <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder>
-        <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %fieldEncrypt{%msg}%n</pattern>
-    </encoder>
+<encoder>
+    <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %fieldEncrypt{%msg}%n</pattern>
+</encoder>
 </appender>
 <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-...<pattern>...%encryptMobile{%msg}...</pattern>
-...</appender>
 ...
+<pattern>...%encryptMobile{%msg}...</pattern>
+...
+</appender>
+        ...
 ```
 ### 3. 创建配置文件
 

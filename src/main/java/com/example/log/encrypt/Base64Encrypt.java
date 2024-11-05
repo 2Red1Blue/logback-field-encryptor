@@ -1,4 +1,4 @@
-package com.yuanbao.sms.encrypt;
+package com.example.log.encrypt;
 
 import java.util.Base64;
 

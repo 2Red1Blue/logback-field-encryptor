@@ -1,4 +1,4 @@
-package com.yuanbao.sms.encrypt;
+package com.example.log.encrypt;
 
 /**
  * @author liuzhixin
