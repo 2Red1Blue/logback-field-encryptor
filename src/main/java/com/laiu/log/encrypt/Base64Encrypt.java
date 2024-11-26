@@ -1,4 +1,4 @@
-package com.example.log.encrypt;
+package com.laiu.log.encrypt;
 
 import java.util.Base64;
 

@@ -1,7 +1,7 @@
-package com.example.log.spi;
+package com.laiu.log.spi;
 
-import com.example.log.encrypt.EncryptStrategy;
-import com.example.log.encrypt.XXTeaEncrypt;
+import com.laiu.log.encrypt.EncryptStrategy;
+import com.laiu.log.encrypt.XXTeaEncrypt;
 
 /**
  * @author liuzhixin

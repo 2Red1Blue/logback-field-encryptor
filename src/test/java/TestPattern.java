@@ -1,4 +1,4 @@
-import com.example.log.util.XXTEAUtil;
+import com.laiu.log.util.XXTEAUtil;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

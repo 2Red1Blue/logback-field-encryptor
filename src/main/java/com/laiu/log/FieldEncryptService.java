@@ -1,67 +1,61 @@
-package com.example.log.convertor;
+package com.laiu.log;
+
+
+import com.laiu.log.config.FieldEncryptConfig;
+import com.laiu.log.encrypt.Base64Encrypt;
+import com.laiu.log.encrypt.EncryptStrategy;
+import com.laiu.log.encrypt.XXTeaEncrypt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.example.log.spi.EncryptStrategyFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.example.log.config.FieldEncryptConfig;
-import com.example.log.encrypt.EncryptStrategy;
-
-import ch.qos.logback.classic.pattern.ClassicConverter;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-
 /**
  * @author liuzhixin
- * @Description:
+ * @Description
  */
-public class FieldEncryptConverter extends ClassicConverter {
-    private static final Logger logger = LoggerFactory.getLogger(FieldEncryptConverter.class);
+public class FieldEncryptService {
+    private static final Logger logger = LoggerFactory.getLogger(FieldEncryptService.class);
     private FieldEncryptConfig config;
     private Map<String, List<Pattern>> fieldPatterns = new HashMap<>();
     private Map<String, EncryptStrategy> encryptStrategies = new HashMap<>();
 
-
-    @Override
-    public void start() {
+    private FieldEncryptService() {
         config = loadConfig();
         // 为每个字段编译正则并创建加密策略
         config.getEncryptFields().forEach((fieldName, field) -> {
-            try {
-                // 编译正则
-                List<Pattern> patterns = field.getPatterns().stream()
-                        .map(pattern -> Pattern.compile(String.format(pattern, fieldName)))
-                        .collect(Collectors.toList());
-                fieldPatterns.put(fieldName, patterns);
+            // 编译正则
+            List<Pattern> patterns = field.getPatterns().stream()
+                    .map(pattern -> Pattern.compile(String.format(pattern, fieldName)))
+                    .collect(Collectors.toList());
+            fieldPatterns.put(fieldName, patterns);
 
-                // 创建加密策略
-                EncryptStrategy strategy = EncryptStrategyFactory.createStrategy(field.getEncryptType(), field.getEncryptKey());
-
-                encryptStrategies.put(fieldName, strategy);
-            } catch (Exception e) {
-                logger.warn("Failed to compile pattern for field: {}, not use encrypt, error: {}", fieldName, e.getMessage(), e);
-            }
+            // 创建加密策略
+            EncryptStrategy strategy = "XXTEA".equals(field.getEncryptType())
+                    ? new XXTeaEncrypt(field.getEncryptKey())
+                    : new Base64Encrypt();
+            encryptStrategies.put(fieldName, strategy);
         });
-        super.start();
     }
 
-    @Override
-    public String convert(ILoggingEvent event) {
-        String message = event.getFormattedMessage();
+    private static class FieldEncryptServiceHolder {
+        private static final FieldEncryptService INSTANCE = new FieldEncryptService();
+    }
 
+    public static FieldEncryptService getInstance() {
+        return FieldEncryptServiceHolder.INSTANCE;
+    }
+
+    public String encryptMessage(String message) {
+        try {
             // 对每个字段进行加密
             for (Map.Entry<String, List<Pattern>> entry : fieldPatterns.entrySet()) {
                 String fieldName = entry.getKey();
@@ -70,14 +64,20 @@ public class FieldEncryptConverter extends ClassicConverter {
                         try {
                             message = encryptField(message, pattern, fieldName);
                         } catch (Exception e) {
-                            //message = handleEncryptionError(message, fieldName, e);
-                            logger.warn("Failed to encrypt field: {}, error: {}", fieldName, e.getMessage(), e);
+                            message = handleEncryptionError(message, fieldName, e);
                         }
                     }
                 }
             }
+        } catch (Exception e) {
+            String errMessage = String.format("ENCRYPTION_ERROR: General encryption failed. Error: %s, Stack: %s",
+                    e.getMessage(),
+                    getStackTraceAsString(e));
+            logger.warn(errMessage);
+        }
         return message;
     }
+
     private String handleEncryptionError(String message, String fieldName, Exception e) {
         String errorMsg = String.format("[ENCRYPTION_ERROR for %s: %s]", fieldName, e.getMessage());
         return message.replaceAll(
@@ -85,6 +85,7 @@ public class FieldEncryptConverter extends ClassicConverter {
                 "$1" + errorMsg
         );
     }
+
     private String getStackTraceAsString(Exception e) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
@@ -92,26 +93,6 @@ public class FieldEncryptConverter extends ClassicConverter {
         return sw.toString();
     }
 
-    /*private String encryptField(String message, Pattern pattern, String fieldName) {
-        Matcher matcher = pattern.matcher(message);
-        StringBuffer sb = new StringBuffer();
-        while (matcher.find()) {
-            String value = matcher.group(2);
-            if (value == null || value.trim().isEmpty() || "null".equalsIgnoreCase(value.trim())) {
-                // 保持原样输出
-                matcher.appendReplacement(sb, matcher.group(1) + value +
-                        (matcher.groupCount() == 3 ? matcher.group(3) : ""));
-                continue;
-            }
-            String encrypted = encryptStrategies.get(fieldName).encrypt(value);
-            matcher.appendReplacement(sb, matcher.group(1) + encrypted +
-                    (matcher.groupCount() == 3 ? matcher.group(3) : ""));
-        }
-        matcher.appendTail(sb);
-        return sb.toString();
-    }*/
-    //todo:这个方法是针对特定正则组的,若使用方提供匹配规则需spi
-    //"(\\\\*\"*%s\\\\*\"*\\s*[:=]\\s*)(\\\\*\"*)(.*?)(?=,|\\}|\\)|$"
     private String encryptField(String message, Pattern pattern, String fieldName) {
         Matcher matcher = pattern.matcher(message);
         StringBuffer sb = new StringBuffer();
@@ -143,10 +124,10 @@ public class FieldEncryptConverter extends ClassicConverter {
         try {
             Properties props = new Properties();
             InputStream asStream = getClass().getClassLoader().getResourceAsStream("field-encrypt.properties");
-            if (asStream != null){
+            if (asStream != null) {
                 InputStreamReader reader = new InputStreamReader(asStream, StandardCharsets.UTF_8);
                 props.load(reader);
-                return  loadFromProperties(props);
+                return loadFromProperties(props);
             } else {
                 logger.warn("No configuration file found, using default configuration");
                 throw new RuntimeException("No configuration file found");
@@ -190,4 +171,27 @@ public class FieldEncryptConverter extends ClassicConverter {
         return config;
     }
 
+    public String encryptMessageWithPatterns(String message, Map<String, List<Pattern>> patterns) {
+        try {
+            // 对每个字段进行加密
+            for (Map.Entry<String, List<Pattern>> entry : patterns.entrySet()) {
+                String fieldName = entry.getKey();
+                if (message.contains(fieldName)) {
+                    for (Pattern pattern : entry.getValue()) {
+                        try {
+                            message = encryptField(message, pattern, fieldName);
+                        } catch (Exception e) {
+                            message = handleEncryptionError(message, fieldName, e);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            String errMessage = String.format("ENCRYPTION_ERROR: General encryption failed. Error: %s, Stack: %s",
+                    e.getMessage(),
+                    getStackTraceAsString(e));
+            logger.warn(errMessage);
+        }
+        return message;
+    }
 }

@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.yuanbao</groupId>
+    <groupId>com.laiu</groupId>
     <artifactId>logback-field-encryptor</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>0.1.2-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -15,26 +15,43 @@
             <version>${logback.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logback.encoder.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun</groupId>
+            <artifactId>tools</artifactId>
+            <version>1.8</version>
+            <scope>system</scope>
+            <systemPath>${java.home}/../lib/tools.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service-annotations</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup</groupId>
+            <artifactId>javapoet</artifactId>
+            <version>1.13.0</version>
+        </dependency>
     </dependencies>
 
     <properties>
+        <logback.encoder.version>6.2</logback.encoder.version>
         <logback.version>1.2.12</logback.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
-    <distributionManagement>
-        <repository>
-            <id>nexus-releases</id>
-            <name>yuanbao maven release</name>
-            <url>https://nexus.ybaobx.com/repository/maven-release/</url>
-        </repository>
-        <snapshotRepository>
-            <id>nexus-snapshots</id>
-            <name>yuanbao maven snapshot</name>
-            <url>https://nexus.ybaobx.com/repository/maven-snapshot/</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <build>
         <resources>
@@ -46,5 +63,44 @@
                 </excludes>
             </resource>
         </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <!--<configuration>
+                    <annotationProcessors>
+                        <annotationProcessor>
+                            com.laiu.log.processor.SecureLogProcessorBak
+                        </annotationProcessor>
+                    </annotationProcessors>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>-->
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>com.laiu</groupId>
+                            <artifactId>logback-field-encryptor</artifactId>
+                            <version>0.1.2-SNAPSHOT</version>
+                        </path>
+                        <path>
+                            <groupId>com.google.auto.service</groupId>
+                            <artifactId>auto-service</artifactId>
+                            <version>1.1.1</version>
+                        </path>
+                    </annotationProcessorPaths>
+                    <compilerArgs>
+                        <!-- 显示详细的处理器信息 -->
+                        <arg>-verbose</arg>
+                        <!-- 打印注解处理器的调试信息 -->
+                        <arg>-J-verbose:class</arg>
+                        <arg>-Xlint:processing</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>

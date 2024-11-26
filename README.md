@@ -17,7 +17,7 @@
 ```xml
 <!-- 1. 定义转换器 -->
 <conversionRule conversionWord="fieldEncrypt"
-                converterClass="com.example.log.convertor.FieldEncryptConverter"/>
+                converterClass="com.laiu.log.convertor.FieldEncryptConverter"/>
 
         <!-- 2. 在 pattern 中使用转换器 -->
 <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">

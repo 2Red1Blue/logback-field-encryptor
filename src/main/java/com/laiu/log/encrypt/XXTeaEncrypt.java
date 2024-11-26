@@ -1,6 +1,6 @@
-package com.example.log.encrypt;
+package com.laiu.log.encrypt;
 
-import com.example.log.util.XXTEAUtil;
+import com.laiu.log.util.XXTEAUtil;
 
 /**
  * @author liuzhixin

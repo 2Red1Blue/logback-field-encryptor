@@ -1,4 +1,4 @@
-package com.example.log.util;
+package com.laiu.log.util;
 
 
 import java.io.UnsupportedEncodingException;

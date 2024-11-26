@@ -1,4 +1,4 @@
-package com.example.log.config;
+package com.laiu.log.config;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,6 +17,8 @@ public class FieldEncryptConfig {
         return encryptFields;
     }
 
+    public static final String DEFAULT_PATTERN = "(\\\\*\"*%s\\\\*\"*\\s*[:=]\\s*)(\\\\*\"*)(.*?)(?=,|\\}|\\)|$)";
+
     public static class EncryptField {
         private String fieldName;
         private String encryptType; // "XXTEA" or "BASE64"
@@ -33,7 +35,8 @@ public class FieldEncryptConfig {
                     //"(%s=)([^,}\\s]+)"            // toString模式
                     //"(%s[:=])\\s*([^,}\\s\\)]+?)(?=[,}\\s\\)])" //存在mobile:{}放在结尾匹配不上的情况
                     //"(%s[:=])\\s*(.*?)(?=,|\\}|\\)|$)"
-                    "(\\\\*\"*%s\\\\*\"*\\s*[:=]\\s*)(\\\\*\"*)(.*?)(?=,|\\}|\\)|$)"
+                    //"(\\\\*\"*%s\\\\*\"*\\s*[:=]\\s*)(\\\\*\"*)(.*?)(?=,|\\}|\\)|$)"
+                    DEFAULT_PATTERN
             );
         }
         public String getFieldName() {
