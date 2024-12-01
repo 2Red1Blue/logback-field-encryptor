@@ -19,7 +19,7 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 import java.util.Set;
 
-@AutoService(Processor.class)
+//@AutoService(Processor.class)
 @SupportedAnnotationTypes("com.laiu.log.annotation.SecureLog")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class SecureLogProcessor extends AbstractProcessor {
