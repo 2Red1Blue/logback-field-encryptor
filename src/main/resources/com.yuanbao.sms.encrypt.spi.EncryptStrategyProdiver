@@ -1,2 +1,2 @@
-com.yuanbao.sms.encrypt.provider.XXTeaEncryptProvider
-com.yuanbao.sms.encrypt.provider.Base64EncryptProvider
+com.example.log.spi.XXTeaEncryptProvider
+com.example.log.spi.Base64EncryptProvider
